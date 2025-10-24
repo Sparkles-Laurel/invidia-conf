@@ -1,0 +1,45 @@
+on:
+    push:
+        branches: 
+            - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest   # minimal host required by GitHub Actions
+    container:
+      image: node:20-alpine  # tiny Alpine container
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Pulumi
+        run: npm install -g pulumi
+
+      - name: Install dependencies
+        run: npm install  # adjust for your project
+
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Pulumi login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: pulumi login
+
+      - name: Preview Pulumi changes
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: pulumi preview
+
+      - name: Deploy Pulumi stack
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: pulumi up --yes
