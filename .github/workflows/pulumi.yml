@@ -7,7 +7,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest   # minimal host required by GitHub Actions
     container:
-      image: node:20-alpine  # tiny Alpine container
+      image: node:20  
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,10 +19,7 @@ jobs:
         run: npm install  # adjust for your project
       - name: Install Azure CLI
         run: |
-            apk add --no-cache curl bash
-            apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make py3-pip
-            python3 -m venv venv
-            sh -c "./venv/bin/activate && pip install --upgrade pip && pip install azure-cli"
+           curl -sL https://aka.ms/InstallAzureCLIDeb | bash 
       - name: Azure login
         uses: azure/login@v1
         with:
