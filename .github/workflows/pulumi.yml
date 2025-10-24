@@ -1,25 +1,33 @@
 on:
-    push:
-        branches: 
-            - master
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest   # minimal host required by GitHub Actions
-    container:
-      image: node:20  
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Pulumi
-        run: npm install -g @pulumi/pulumi
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Install dependencies
-        run: npm install  # adjust for your project
+      - name: Install Pulumi CLI
+        run: |
+          curl -fsSL https://get.pulumi.com | sh
+          echo "$HOME/.pulumi/bin" >> $GITHUB_PATH
+
       - name: Install Azure CLI
         run: |
-           curl -sL https://aka.ms/InstallAzureCLIDeb | bash 
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Azure login
         uses: azure/login@v1
         with:
