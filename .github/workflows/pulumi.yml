@@ -21,8 +21,10 @@ jobs:
         run: |
             apk add --no-cache curl bash
             apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make py3-pip
-            pip --break-system-packages install --upgrade pip
-            pip --break-system-packages install azure-cli
+            python3 -m venv venv
+            ./venv/bin/activate
+            pip install --upgrade pip
+            pip install azure-cli
 
       - name: Azure login
         uses: azure/login@v1
