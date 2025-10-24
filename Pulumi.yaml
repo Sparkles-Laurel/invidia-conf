@@ -1,0 +1,10 @@
+name: invidia
+description: The server configuration for invidia
+runtime:
+  name: nodejs
+  options:
+    packagemanager: pnpm
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: azure-typescript
